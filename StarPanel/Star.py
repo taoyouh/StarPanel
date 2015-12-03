@@ -41,15 +41,18 @@ class StarCollection:
     def getStars(self):
         return self.__stars
 
-    def updateSpan(self, tSpan):
+    def updateSpan(self, tSpan, interval):
         if float(tSpan) < 0:
             raise ArithmeticError()
-        while tSpan > 100:
-            self.__update(100)
-            tSpan -= 100
+        if float(interval) < 0:
+            raise ArithmeticError()
+        while tSpan > interval:
+            self.__update(interval)
+            tSpan -= interval
         self.__update(tSpan)
 
     def __update(self, t):
+        t = float(t)
         g = 6.67E-11
         import Vector
         n = len(self.__stars)
