@@ -1,6 +1,29 @@
-﻿import Star
+﻿import threading
+import time
+import Star
 import Tkinter
 import Vector
+from Drawing import InitLayout
+
+def onUpdate():
+    global starColl
+    starColl.updateSpan(3000, 10)
+
+def onDraw():
+    InitLayout(c, starColl.getStars(), 200, 200, 0.3E-6, False)
+    tk.update()
+
+class Loop(threading.Thread):
+    def __init__(self, interval, action):
+        self.__interval = interval
+        self.__action = action
+        threading.Thread.__init__(self)
+
+    def run(self):
+        while 1:
+            self.__action()
+            time.sleep(self.__interval)
+
 starColl = Star.StarCollection()
 star1 = Star.Star(5.96E24, 20000)
 starColl.append(star1)
@@ -25,9 +48,9 @@ tk = Tkinter.Tk()
 c = Tkinter.Canvas(tk, width = 400, height = 400)
 c.pack()
 
-from Drawing import InitLayout
-while 1:
-    InitLayout(c, starColl.getStars(), 200, 200, 0.3E-6, False)
-    tk.update()
-    starColl.updateSpan(3000, 10)
+InitLayout(c, starColl.getStars(), 200, 200, 0.3E-6, False)
+updateLoop = Loop(0, onUpdate)
+updateLoop.start()
+drawLoop = Loop(2, onDraw)
+drawLoop.start()
 raw_input()
