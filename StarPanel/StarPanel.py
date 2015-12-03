@@ -10,7 +10,7 @@ def onUpdate():
     starColl.updateSpan(3000, 10)
 
 def onDraw():
-    InitLayout(c, starColl.getStars(), 200, 200, 0.3E-6, False)
+    InitLayout(c, starColl.getStars(), 200, 200, 0.3E-6)
     tk.update()
 
 class Loop(threading.Thread):
@@ -48,9 +48,9 @@ tk = Tkinter.Tk()
 c = Tkinter.Canvas(tk, width = 400, height = 400)
 c.pack()
 
-InitLayout(c, starColl.getStars(), 200, 200, 0.3E-6, False)
+InitLayout(c, starColl.getStars(), 200, 200, 0.3E-6)
 updateLoop = Loop(0, onUpdate)
 updateLoop.start()
-drawLoop = Loop(2, onDraw)
+drawLoop = Loop(0.01, onDraw)
 drawLoop.start()
 raw_input()
