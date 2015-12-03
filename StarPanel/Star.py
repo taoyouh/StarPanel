@@ -56,13 +56,13 @@ class StarCollection:
         for i in range(n):
             for j in range(i + 1, n):
                 star1 = self.__stars[i]
-                star2 = self.__stars[i + 1]
+                star2 = self.__stars[j]
                 rVec = star2.getPos() - star1.getPos()
                 force = g * star1.getMass() * star2.getMass() / (rVec.abs() ** 2) * rVec.unitVec()
                 star1.setV(star1.getV() + t / star1.getMass() * force)
                 star2.setV(star2.getV() - t / star2.getMass() * force)
-                star1.setPos(star1.getPos() + t * star1.getV())
-                star2.setPos(star2.getPos() + t * star2.getV())
+        for star in self.__stars:
+            star.setPos(star.getPos() + t * star.getV())
 
     def calibrate(self):
         from Vector import Vector
