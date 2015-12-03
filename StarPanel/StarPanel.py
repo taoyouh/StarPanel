@@ -17,7 +17,7 @@ starColl.append(star3)
 
 star4 = Star.Star(1000, 2000)
 star4.setPos(Vector.Vector(0, 5E7))
-star4.setV(Vector.Vector(1000, 0))
+star4.setV(Vector.Vector(2000, 0))
 starColl.append(star4)
 starColl.calibrate()
 
@@ -27,7 +27,7 @@ c.pack()
 
 from Drawing import InitLayout
 while 1:
-    InitLayout(c, starColl.getStars(), 200, 200, 0.3E-6)
+    InitLayout(c, starColl.getStars(), 200, 200, 0.3E-6, False)
     tk.update()
-    starColl.updateSpan(1000, 10)
+    starColl.updateSpan(3000, 10)
 raw_input()

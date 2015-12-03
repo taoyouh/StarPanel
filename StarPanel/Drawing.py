@@ -14,16 +14,17 @@
 list = []
 can = None
 
-def InitLayout(canvas, starList, originX, originY, scale) :
+def InitLayout(canvas, starList, originX, originY, scale, clear = True) :
     import Vector
     import Star
     import Tkinter
     global list
     global can
     can = canvas
-    for item in list:
-        canvas.delete(item[0])
-    list = []
+    if clear:
+        for item in list:
+            canvas.delete(item[0])
+        list = []
     for star in starList:
         pos = star.getPos()
         r = max((star.getR(), 1 / scale))
