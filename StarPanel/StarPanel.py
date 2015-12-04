@@ -4,6 +4,7 @@ import Star
 import Tkinter
 import Vector
 from Drawing import InitLayout
+from Drawing import updateLayout
 
 updateSpan = 100
 scale = 7E-11
@@ -18,16 +19,18 @@ def onDraw():
     global starColl
     global scale
     global tk
-    InitLayout(c, starColl.getStars(), 400, 400, scale)
+    updateLayout()
     tk.update()
 
 def canvas_clicked(event):
     global scale
     scale *= 10
+    InitLayout(c, starColl.getStars(), 400, 400, scale)
 
 def canvas_rightClicked(event):
     global scale
     scale *= 0.1
+    InitLayout(c, starColl.getStars(), 400, 400, scale)
 
 def canvas_doubleClicked(event):
     global updateSpan
@@ -110,10 +113,10 @@ starColl.append(pluto)
 starColl.calibrate()
 
 tk = Tkinter.Tk()
-c = Tkinter.Canvas(tk, width = 800, height = 800)
+c = Tkinter.Canvas(tk, width = 800, height = 800, bg = "black")
 c.pack()
 
-InitLayout(c, starColl.getStars(), 400, 400, 1E-10)
+InitLayout(c, starColl.getStars(), 400, 400, scale)
 c.bind("<Button-1>", canvas_clicked)
 c.bind("<Button-3>", canvas_rightClicked)
 c.bind("<Double-Button-1>", canvas_doubleClicked)
