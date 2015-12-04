@@ -32,6 +32,9 @@
     def __rmul__(self, other):
         return Vector(self.getX() * other, self.getY() * other)
 
+    def __neg__(self):
+        return Vector(-self.__x, -self.__y)
+
     def __repr__(self):
         return "Vector(" + str(self.__x) + " , " + str(self.__y) + ")"
 
