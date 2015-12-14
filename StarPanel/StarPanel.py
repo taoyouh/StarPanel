@@ -25,6 +25,7 @@ def onDraw():
 def canvas_clicked(event):
     global scale
     scale *= 10
+    global updateLoop
     InitLayout(c, starColl.getStars(), 400, 400, scale)
 
 def canvas_rightClicked(event):
