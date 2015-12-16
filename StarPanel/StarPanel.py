@@ -3,8 +3,6 @@ import time
 import Star
 from Tkinter import *
 import Vector
-from Drawing import InitLayout
-from Drawing import updateLayout
 
 updateSpan = 100
 scale = 7E-11
@@ -59,12 +57,14 @@ class GUI:
 
 class StarPanel:
     def __init__(self):
+        import Drawing
         self.__starColl = Star.StarCollection()
         self.__updateSpan = 1000
         self.__scale = 7E-11
         self.__canvas = None
         self.__updateLoop = Loop(0, self.__onUpdate)
         self.__drawLoop = Loop(0.16, self.__onDraw)
+        self.__drawing = Drawing.Drawing()
 
 
     def setCanvas(self, canvas):
@@ -77,7 +77,7 @@ class StarPanel:
         self.__updateLoop.stop()
         self.__drawLoop.stop()
 
-        InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
+        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
         self.__updateLoop = Loop(0, self.__onUpdate)
         self.__drawLoop = Loop(0.16, self.__onDraw)
         self.__updateLoop.start()
@@ -90,11 +90,11 @@ class StarPanel:
         self.__starColl.updateSpan(self.__updateSpan, self.__updateSpan)
 
     def __onDraw(self):
-        updateLayout()
+        self.__drawing.updateLayout()
 
     def zoomIn(self):
         self.__scale *= 2
-        InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
+        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
 
     def zoomOut(self):
         self.__scale *= 0.5
