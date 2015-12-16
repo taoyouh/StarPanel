@@ -1,7 +1,7 @@
 ﻿import threading
 import time
 import Star
-import Tkinter
+from Tkinter import *
 import Vector
 from Drawing import InitLayout
 from Drawing import updateLayout
@@ -9,50 +9,125 @@ from Drawing import updateLayout
 updateSpan = 100
 scale = 7E-11
 
-def onUpdate():
-    global starColl
-    global updateSpan
-    starColl.updateSpan(updateSpan, updateSpan)
+class GUI:
+    def __init__(self, starPanel):
+        self.__starPanel = starPanel
 
-def onDraw():
-    global c
-    global starColl
-    global scale
-    global tk
-    updateLayout()
-    tk.update()
+        self.root = Tk()
+        Label(self.root,text = "Welcome to star management system",bg = "yellow").grid(row = 0,column = 0)
+        self.b1 = Button(self.root,text = "add star")
+        self.b2 = Button(self.root,text = "delete star")
+        self.b3 = Button(self.root,text = "display star")
+        self.b1.grid(row = 1,column = 0)
+        self.b2.grid(row = 2,column = 0)
+        self.b3.grid(row = 3,column = 0)
+        Label(self.root,text = "accelerate").grid(row = 1,column = 1)
+        Label(self.root,text = "slow").grid(row = 2,column = 1)
+        Label(self.root,text = "magnify").grid(row = 3,column = 1)
+        Label(self.root,text = "shrinking").grid(row = 4,column = 1)
+        self.A1 = Button(self.root,text = "+",command = self.accelearate)
+        self.A2 = Button(self.root,text = "-",command = self.slow)
+        self.A3 = Button(self.root,text = "+",command = self.magnify)
+        self.A4 = Button(self.root,text = "-",command = self.shrinking)
+        self.A1.grid(row = 1,column = 2)
+        self.A2.grid(row = 2,column = 2)
+        self.A3.grid(row = 3,column = 2)
+        self.A4.grid(row = 4,column = 2)
+        self.v1 = StringVar()
+        self.E1 = Entry(self.root,textvariable = self.v1)
+        self.E1.grid(row = 4,column = 0)
 
-def canvas_clicked(event):
-    global scale
-    scale *= 10
-    global updateLoop
-    InitLayout(c, starColl.getStars(), 400, 400, scale)
+        self.c1 = Canvas(self.root, width = 800, height = 800, bg = "black")
+        self.c1.grid(row = 6, column = 0)
 
-def canvas_rightClicked(event):
-    global scale
-    scale *= 0.1
-    InitLayout(c, starColl.getStars(), 400, 400, scale)
+        starPanel.setCanvas(self.c1)
+        starPanel.startGraphic()
 
-def canvas_doubleClicked(event):
-    global updateSpan
-    updateSpan *= 10
+        self.root.mainloop()
 
-def canvas_tripleClicked(event):
-    global updateSpan
-    updateSpan *= 0.1
+    def accelearate(self):
+        self.__starPanel.accelerate()
+
+    def slow(self):
+        self.__starPanel.deccelerate()
+
+    def magnify(self):
+        self.__starPanel.zoomIn()
+
+    def shrinking(self):
+        self.__starPanel.zoomOut()
+
+class StarPanel:
+    def __init__(self):
+        self.__starColl = Star.StarCollection()
+        self.__updateSpan = 1000
+        self.__scale = 7E-11
+        self.__canvas = None
+        self.__updateLoop = Loop(0, self.__onUpdate)
+        self.__drawLoop = Loop(0.16, self.__onDraw)
+
+
+    def setCanvas(self, canvas):
+        if not isinstance(canvas, Canvas):
+            raise TypeError("The \"canvas\" should be a canvas. ")
+        self.__canvas = canvas
+
+
+    def startGraphic(self):
+        self.__updateLoop.stop()
+        self.__drawLoop.stop()
+
+        InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
+        self.__updateLoop = Loop(0, self.__onUpdate)
+        self.__drawLoop = Loop(0.16, self.__onDraw)
+        self.__updateLoop.start()
+        self.__drawLoop.start()
+
+    def getStarColl(self):
+        return self.__starColl
+
+    def __onUpdate(self):
+        self.__starColl.updateSpan(self.__updateSpan, self.__updateSpan)
+
+    def __onDraw(self):
+        updateLayout()
+
+    def zoomIn(self):
+        self.__scale *= 2
+        InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
+
+    def zoomOut(self):
+        self.__scale *= 0.5
+        InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
+
+    def accelerate(self):
+        self.__updateSpan *= 2
+
+    def deccelerate(self):
+        self.__updateSpan *= 0.5
 
 class Loop(threading.Thread):
     def __init__(self, interval, action):
         self.__interval = interval
         self.__action = action
+        self.__running = True
+        self.__lock = threading.Lock()
         threading.Thread.__init__(self)
 
     def run(self):
-        while 1:
+        self.__lock.acquire()
+        while self.__running:
             self.__action()
             time.sleep(self.__interval)
+        self.__lock.release()
 
-starColl = Star.StarCollection()
+    def stop(self):
+        self.__running = False
+        self.__lock.acquire()
+
+starPanel = StarPanel()
+starColl = starPanel.getStarColl()
+
 sun = Star.Star(1.9891E30, 6.96E8)
 sun.setColor("red")
 starColl.append(sun)
@@ -113,17 +188,5 @@ starColl.append(pluto)
 
 starColl.calibrate()
 
-tk = Tkinter.Tk()
-c = Tkinter.Canvas(tk, width = 800, height = 800, bg = "black")
-c.pack()
-
-InitLayout(c, starColl.getStars(), 400, 400, scale)
-c.bind("<Button-1>", canvas_clicked)
-c.bind("<Button-3>", canvas_rightClicked)
-c.bind("<Double-Button-1>", canvas_doubleClicked)
-c.bind("<Triple-Button-1>", canvas_tripleClicked)
-updateLoop = Loop(0, onUpdate)
-updateLoop.start()
-drawLoop = Loop(0.01, onDraw)
-drawLoop.start()
+gui = GUI(starPanel)
 raw_input()
