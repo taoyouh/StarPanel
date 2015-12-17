@@ -55,6 +55,8 @@ class GUI:
     def shrinking(self):
         self.__starPanel.zoomOut()
 
+from datetime import datetime
+from datetime import timedelta
 class StarPanel:
     def __init__(self):
         import Drawing
@@ -65,6 +67,10 @@ class StarPanel:
         self.__updateLoop = Loop(0, self.__onUpdate)
         self.__drawLoop = Loop(0.16, self.__onDraw)
         self.__drawing = Drawing.Drawing()
+        self.__drawTime1 = datetime.now()
+        self.__drawTime2 = datetime.now()
+        self.__updateTime1 = datetime.now()
+        self.__updateTime2 = datetime.now()
 
 
     def setCanvas(self, canvas):
@@ -79,7 +85,7 @@ class StarPanel:
 
         self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
         self.__updateLoop = Loop(0, self.__onUpdate)
-        self.__drawLoop = Loop(0.16, self.__onDraw)
+        self.__drawLoop = Loop(0.016, self.__onDraw)
         self.__updateLoop.start()
         self.__drawLoop.start()
 
@@ -87,10 +93,20 @@ class StarPanel:
         return self.__starColl
 
     def __onUpdate(self):
+        self.__updateTime1 = self.__updateTime2
+        self.__updateTime2 = datetime.now()
         self.__starColl.updateSpan(self.__updateSpan, self.__updateSpan)
 
+    def getTimeScale(self):
+        return self.__updateSpan / (self.__updateTime2 - self.__updateTime1).total_seconds()
+
     def __onDraw(self):
+        self.__drawTime1 = self.__drawTime2
+        self.__drawTime2 = datetime.now()
         self.__drawing.updateLayout()
+
+    def getFPS(self):
+        return int(1 / (self.__drawTime2 - self.__drawTime1).total_seconds())
 
     def zoomIn(self):
         self.__scale *= 2
