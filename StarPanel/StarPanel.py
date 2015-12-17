@@ -98,7 +98,7 @@ class StarPanel:
 
     def zoomOut(self):
         self.__scale *= 0.5
-        InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
+        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
 
     def accelerate(self):
         self.__updateSpan *= 2
