@@ -6,6 +6,15 @@
         self.__v = Vector(0, 0)
         self.__r = r
         self.__color = "black"
+        self.__name = "star"
+
+    def setName(self, value):
+        if not isinstance(value, str):
+            raise TypeError("Name should be string. ")
+        self.__name = value
+
+    def getName(self):
+        return self.__name
 
     def getMass(self):
         return self.__mass
@@ -30,6 +39,10 @@
 
     def setColor(self, color):
         self.__color = color
+
+    def __repr__(self):
+        return ("%s(Mass = %s, Color = %s, Velocity = %s, Position = %s)" % \
+                (self.getName(), str(self.getMass()), self.getColor(), str(self.getV()), str(self.getPos())))
 
 class StarCollection:
     def __init__(self):
