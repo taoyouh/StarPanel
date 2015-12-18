@@ -61,11 +61,13 @@ class StarPanel:
     def __init__(self):
         import Drawing
         self.__starColl = Star.StarCollection()
-        self.__updateSpan = 1000
+        self.__updateSpan = 100000
         self.__scale = 7E-11
         self.__canvas = None
-        self.__updateLoop = Loop(0, self.__onUpdate)
-        self.__drawLoop = Loop(0.16, self.__onDraw)
+        self.__drawInterval = 0.016
+        self.__updateInterval = 0.001
+        self.__updateLoop = Loop(self.__updateInterval, self.__onUpdate)
+        self.__drawLoop = Loop(self.__drawInterval, self.__onDraw)
         self.__drawing = Drawing.Drawing()
         self.__drawTime1 = datetime.now()
         self.__drawTime2 = datetime.now()
@@ -80,14 +82,22 @@ class StarPanel:
 
 
     def startGraphic(self):
-        self.__updateLoop.stop()
+        self.__drawLoop.stop()
+        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
+        self.__drawLoop = Loop(self.__drawInterval, self.__onDraw)
+        self.__drawLoop.start()
+        self.startUpdate()
+
+    def stopGraphic(self):
         self.__drawLoop.stop()
 
-        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
-        self.__updateLoop = Loop(0, self.__onUpdate)
-        self.__drawLoop = Loop(0.016, self.__onDraw)
+    def startUpdate(self):
+        self.__updateLoop.stop()
+        self.__updateLoop = Loop(self.__updateInterval, self.__onUpdate)
         self.__updateLoop.start()
-        self.__drawLoop.start()
+        
+    def stopUpdate(self):
+        self.__updateLoop.stop()
 
     def getStarColl(self):
         return self.__starColl
@@ -117,10 +127,12 @@ class StarPanel:
         self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
 
     def accelerate(self):
-        self.__updateSpan *= 2
+        self.__updateInterval *= 0.5
+        self.startUpdate()
 
     def deccelerate(self):
-        self.__updateSpan *= 0.5
+        self.__updateInterval *= 2
+        self.startUpdate()
 
 class Loop(threading.Thread):
     def __init__(self, interval, action):

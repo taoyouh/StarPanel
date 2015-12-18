@@ -55,6 +55,12 @@ class StarCollection:
         return self.__stars
 
     def updateSpan(self, tSpan, interval):
+        n = len(self.__stars)
+        for i in range(n):
+            for j in range(i + 1, n):
+                star1 = self.__stars[i]
+                star2 = self.__stars[j]
+                interval = min(interval, (star2.getPos() - star1.getPos()).abs() /(star2.getV() - star1.getV()).abs() / 10)
         if float(tSpan) < 0:
             raise ArithmeticError()
         if float(interval) < 0:
