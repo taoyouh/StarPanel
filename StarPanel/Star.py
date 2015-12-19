@@ -1,4 +1,5 @@
-﻿class Star:
+﻿import time
+class Star:
     def __init__(self, mass, r):
         from Vector import Vector
         self.__mass = mass
@@ -55,18 +56,19 @@ class StarCollection:
         return self.__stars
 
     def updateSpan(self, interval):
-        interval *= 10
         n = len(self.__stars)
-        for i in range(n):
-            for j in range(i + 1, n):
-                star1 = self.__stars[i]
-                star2 = self.__stars[j]
-                interval = min(interval, (star2.getPos() - star1.getPos()).abs() /(star2.getV() - star1.getV()).abs() / 10)
-        #if float(tSpan) < 0:
-        #    raise ArithmeticError()
-        if float(interval) < 0:
-            raise ArithmeticError()
-        self.__update(interval)
+        if n>2:
+            interval *= 10
+            for i in range(n):
+                for j in range(i + 1, n):
+                    star1 = self.__stars[i]
+                    star2 = self.__stars[j]
+                    interval = min(interval, (star2.getPos() - star1.getPos()).abs() /(star2.getV() - star1.getV()).abs() / 10)
+            if float(interval) < 0:
+                raise ArithmeticError()
+            self.__update(interval)
+        else:
+            time.sleep(1);
         return interval
 
 

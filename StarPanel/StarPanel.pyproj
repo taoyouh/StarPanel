@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>7120e0e3-c9ec-4193-b09c-8fbb3de66c79</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>StarPanel.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -23,6 +23,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Drawing.py" />
+    <Compile Include="GUI.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="main.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Star.py">
       <SubType>Code</SubType>
     </Compile>
