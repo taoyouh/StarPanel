@@ -105,7 +105,7 @@ class StarPanel:
     def __onUpdate(self):
         self.__updateTime1 = self.__updateTime2
         self.__updateTime2 = datetime.now()
-        self.__starColl.updateSpan(self.__updateSpan, self.__updateSpan)
+        self.__updateSpan = self.__starColl.updateSpan(self.__updateSpan)
 
     def getTimeScale(self):
         return self.__updateSpan / (self.__updateTime2 - self.__updateTime1).total_seconds()
