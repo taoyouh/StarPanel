@@ -98,3 +98,6 @@ class StarCollection:
             totalMass += star.getMass()
         for star in self.__stars:
             star.setV(star.getV() - 1 / totalMass * totalP)
+
+    def getInterval(self):
+        return self.__interval

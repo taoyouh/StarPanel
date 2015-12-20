@@ -56,6 +56,7 @@ class StarPanel:
         self.__updateTime1 = self.__updateTime2
         self.__updateTime2 = datetime.now()
         self.__starColl.updateSpan(self.__updateSpan, self.__updateSpan)
+        self.__updateSpan = min(self.__updateSpan, self.__starColl.getInterval())
 
     def getTimeScale(self):
         return self.__updateSpan / (self.__updateTime2 - self.__updateTime1).total_seconds()
@@ -83,6 +84,12 @@ class StarPanel:
     def deccelerate(self):
         self.__updateInterval *= 2
         self.startUpdate()
+
+    def increaseAccuracy(self):
+        self.__updateSpan *= 0.5
+
+    def decreaseAccuracy(self):
+        self.__updateSpan *= 2
 
 class Loop(threading.Thread):
     def __init__(self, interval, action):
