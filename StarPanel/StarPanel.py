@@ -27,6 +27,7 @@ class StarPanel:
         self.__drawTime2 = datetime.now() #后一次绘制的时间（用于计算帧频）
         self.__updateTime1 = datetime.now() #前一次计算的时间
         self.__updateTime2 = datetime.now() #后一次计算的时间（用于计算时间比例尺）
+        self.__followedNumber = -1;
 
 
     def setCanvas(self, canvas):
@@ -40,7 +41,7 @@ class StarPanel:
         开始或重启绘制线程
         '''
         self.__drawLoop.stop()
-        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
+        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale, self.__followedNumber)
         self.__drawLoop = Loop(self.__drawInterval, self.__onDraw)
         self.__drawLoop.start()
         self.startUpdate()
@@ -93,11 +94,11 @@ class StarPanel:
 
     def zoomIn(self):
         self.__scale *= 2
-        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
+        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale, self.__followedNumber)
 
     def zoomOut(self):
         self.__scale *= 0.5
-        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
+        self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale, self.__followedNumber)
 
     def accelerate(self):
         self.__updateInterval *= 0.5
@@ -112,6 +113,10 @@ class StarPanel:
 
     def decreaseAccuracy(self):
         self.__updateSpan *= 2
+
+    def follow(self, followedNumber):
+        self.__followedNumber=followedNumber
+        self.startGraphic()
 
 class Loop(threading.Thread):
     '''
