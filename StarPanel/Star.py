@@ -1,4 +1,5 @@
-﻿import time
+﻿#coding = utf-8
+import time
 class Star:
     def __init__(self, mass, r):
         from Vector import Vector
@@ -56,8 +57,9 @@ class StarCollection:
     def getStars(self):
         return self.__stars
 
-    def updateSpan(self, tSpan, interval):
+    def updateSpan(self, tSpan):
         n = len(self.__stars)
+        interval = tSpan
         for i in range(n):
             for j in range(i + 1, n):
                 star1 = self.__stars[i]
@@ -90,6 +92,10 @@ class StarCollection:
             star.setPos(star.getPos() + t * star.getV())
 
     def calibrate(self):
+        '''
+        在不改变天体间相对速度的情况下，使系统总动量为0。
+        说人话就是不要让所有的天体往一边飘。
+        '''
         from Vector import Vector
         totalP = Vector(0, 0)
         totalMass = 0

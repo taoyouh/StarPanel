@@ -1,4 +1,5 @@
-﻿import threading
+﻿#coding = utf-8
+import threading
 import time
 import Star
 from Tkinter import *
@@ -8,21 +9,24 @@ from GUI import GUI
 from datetime import datetime
 from datetime import timedelta
 class StarPanel:
+    '''
+    控制线程的运行
+    '''
     def __init__(self):
         import Drawing
-        self.__starColl = Star.StarCollection()
-        self.__updateSpan = 100000
-        self.__scale = 7E-11
-        self.__canvas = None
-        self.__drawInterval = 0.016
-        self.__updateInterval = 0.001
-        self.__updateLoop = Loop(self.__updateInterval, self.__onUpdate)
-        self.__drawLoop = Loop(self.__drawInterval, self.__onDraw)
+        self.__starColl = Star.StarCollection() #天体集合
+        self.__updateSpan = 100000 #每次计算对应虚拟世界的时间长度
+        self.__scale = 7E-11 #空间的比例尺
+        self.__canvas = None #用于绘制的画布
+        self.__drawInterval = 0.016 #两次绘制的间隔
+        self.__updateInterval = 0.001 #两次计算的间隔
+        self.__updateLoop = Loop(self.__updateInterval, self.__onUpdate) #计算线程
+        self.__drawLoop = Loop(self.__drawInterval, self.__onDraw) #绘制线程
         self.__drawing = Drawing.Drawing()
-        self.__drawTime1 = datetime.now()
-        self.__drawTime2 = datetime.now()
-        self.__updateTime1 = datetime.now()
-        self.__updateTime2 = datetime.now()
+        self.__drawTime1 = datetime.now() #前一次绘制的时间
+        self.__drawTime2 = datetime.now() #后一次绘制的时间（用于计算帧频）
+        self.__updateTime1 = datetime.now() #前一次计算的时间
+        self.__updateTime2 = datetime.now() #后一次计算的时间（用于计算时间比例尺）
 
 
     def setCanvas(self, canvas):
@@ -32,6 +36,9 @@ class StarPanel:
 
 
     def startGraphic(self):
+        '''
+        开始或重启绘制线程
+        '''
         self.__drawLoop.stop()
         self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale)
         self.__drawLoop = Loop(self.__drawInterval, self.__onDraw)
@@ -39,32 +46,47 @@ class StarPanel:
         self.startUpdate()
 
     def stopGraphic(self):
+        '''
+        停止绘制线程
+        '''
         self.__drawLoop.stop()
 
     def startUpdate(self):
+        '''
+        开始或重启计算线程
+        '''
         self.__updateLoop.stop()
         self.__updateLoop = Loop(self.__updateInterval, self.__onUpdate)
         self.__updateLoop.start()
         
     def stopUpdate(self):
+        '''
+        停止计算线程
+        '''
         self.__updateLoop.stop()
 
     def getStarColl(self):
         return self.__starColl
 
     def __onUpdate(self):
+        '''
+        更新线程的操作
+        '''
         self.__updateTime1 = self.__updateTime2
         self.__updateTime2 = datetime.now()
-        self.__starColl.updateSpan(self.__updateSpan, self.__updateSpan)
+        self.__starColl.updateSpan(self.__updateSpan)
         self.__updateSpan = min(self.__updateSpan, self.__starColl.getInterval())
 
-    def getTimeScale(self):
-        return self.__updateSpan / (self.__updateTime2 - self.__updateTime1).total_seconds()
-
     def __onDraw(self):
+        '''
+        绘制线程的操作
+        '''
         self.__drawTime1 = self.__drawTime2
         self.__drawTime2 = datetime.now()
         self.__drawing.updateLayout()
+
+    def getTimeScale(self):
+        return self.__updateSpan / (self.__updateTime2 - self.__updateTime1).total_seconds()
 
     def getFPS(self):
         return int(1 / (self.__drawTime2 - self.__drawTime1).total_seconds())
@@ -92,6 +114,9 @@ class StarPanel:
         self.__updateSpan *= 2
 
 class Loop(threading.Thread):
+    '''
+    自定义的循环计时器类
+    '''
     def __init__(self, interval, action):
         self.__interval = interval
         self.__action = action
@@ -111,6 +136,9 @@ class Loop(threading.Thread):
         self.__lock.acquire()
 
 def makeASolarSystem(starPanel):
+    '''
+    创建一个示例的太阳系
+    '''
     starColl = starPanel.getStarColl()
 
     sun = Star.Star(1.9891E30, 6.96E8)
