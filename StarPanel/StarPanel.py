@@ -139,6 +139,7 @@ class Loop(threading.Thread):
     def stop(self):
         self.__running = False
         self.__lock.acquire()
+        self.__lock.release()
 
 def makeASolarSystem(starPanel):
     '''
