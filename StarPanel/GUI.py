@@ -162,5 +162,8 @@ class GUI:
         self.top4_view = StringVar()
         Label(top4,text = "choose the order of star you want to chase").grid(row = 0,column = 0)
         Entry(top4,textvariable = self.top4_view).grid(row = 0,column = 1)
-        Button(top4,text = "Go").grid(row = 1,column = 0,sticky = W+E)
-        return eval(self.top4_view.get())
+        Button(top4,text = "Go", command = self.Top4_changeView).grid(row = 1,column = 0,sticky = W+E)
+
+    def Top4_changeView(self):
+        self.__starPanel.follow(eval(self.top4_view.get()))
+        
