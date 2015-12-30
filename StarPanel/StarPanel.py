@@ -41,6 +41,7 @@ class StarPanel:
         开始或重启绘制线程
         '''
         self.__drawLoop.stop()
+        self.__updateSpan = 100000
         self.__drawing.InitLayout(self.__canvas, self.__starColl.getStars(), 400, 400, self.__scale, self.__followedNumber)
         self.__drawLoop = Loop(self.__drawInterval, self.__onDraw)
         self.__drawLoop.start()
