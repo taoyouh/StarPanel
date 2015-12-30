@@ -206,8 +206,12 @@ class GUI:
     def Top4_changeView(self):
         '''用于转换视角的函数'''
         try:
-            self.__starPanel.follow(eval(self.top4_view.get()))
-            self.top4_view.set("")
+            c = eval(self.top4_view.get()) - 1
+            if (c+1) <= len(self.__starPanel.getStarColl().getStars()):
+                self.__starPanel.follow(c)
+                self.top4_view.set("")
+            else:
+                showwarning("Error","out of range")
         except:
             showwarning("Error","enter error")
             self.top4_view.set("")
